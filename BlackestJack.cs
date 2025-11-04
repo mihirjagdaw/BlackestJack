@@ -11,8 +11,6 @@ namespace BlackestJack
         private List<String> suitList = new List<String>() { "Hearts", "Diamonds", "Clubs", "Spades" };
         private List<String> rankList = new List<String>() { "2", "3", "4", "5", "6", "7", "8", "9", "10", "Jack", "Queen", "King", "Ace" };
 
-
-
         public List<Card> CreateDeck()
         {
             List<Card> deck = new List<Card>();
@@ -35,5 +33,6 @@ namespace BlackestJack
             person.hand.Add(dealtCard);
             return dealtCard;
         }
+
     }
 }

@@ -22,9 +22,11 @@ namespace BlackestJack
             int value = 0;
             foreach (var card in hand)
             {
-                if (int.TryParse(card.Rank, out value))
+                int numericValue;
+
+                if (int.TryParse(card.Rank, out numericValue))
                 {
-                    value += int.Parse(card.Rank);
+                    value += numericValue;
                 }
                 else
                 {
@@ -34,7 +36,7 @@ namespace BlackestJack
                     }
                     else if (card.Rank == "Ace")
                     {
-                        Console.WriteLine("Yoh, I haven't thought about this one");
+                        value += 11;
                     }
                 }
             }
