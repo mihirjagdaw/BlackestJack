@@ -50,9 +50,11 @@ namespace BlackestJack
 
                     if (playerChoice.Equals("hit"))
                     {
+                        // check if player has ace and adjust its value if necessary
+                        player.aceHit();
                         Card dealtCard = game.dealCard(deck, player);
                         Console.WriteLine($"Dealt card: {dealtCard.Rank} of {dealtCard.Suit}");
-                        Console.WriteLine($"Player's hand value: {player.calcHandValue()}");
+                        Console.WriteLine($"Player's hand value: {player.calcHandValue()}"); // will count the ace as 11 if the player hits with ace due to dealCard method - NEEDS FIXING!
                         if (player.calcHandValue() > 21)
                         {
                             Console.WriteLine("Bussssssssssst, you lose.");
