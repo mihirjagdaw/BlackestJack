@@ -9,12 +9,10 @@ namespace BlackestJack
     internal class Person
     {
         public List<Card> hand;
-        private int handValue;
 
         public Person()
         {
             hand = new List<Card>();
-            handValue = 0;
         }
 
         public int calcHandValue()
@@ -48,20 +46,6 @@ namespace BlackestJack
             }
 
             return value;
-        }
-
-        public void aceHit()
-        {
-            foreach (var card in hand)
-            {
-                if (card.Rank == "Ace")
-                {
-                    // reduce hand value by 10 to account for ace being 1 instead of 11
-                    handValue -= 10;
-                    return; // only adjust for one ace at a time
-                }
-            }
-           
         }
     }
 }
