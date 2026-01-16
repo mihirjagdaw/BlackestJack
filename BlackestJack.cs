@@ -21,7 +21,19 @@ namespace BlackestJack
                     deck.Add(new Card(suit, rank));
                 }
             }
+            Shuffle(deck);
             return deck;
+        }
+        private void Shuffle(List<Card> deck)
+        {
+            Random rand = new Random();
+            for (int i = deck.Count - 1; i > 0; i--)
+            {
+                int j = rand.Next(i + 1);
+                Card temp = deck[i];
+                deck[i] = deck[j];
+                deck[j] = temp;
+            }
         }
 
         public Card dealCard (List<Card> deck, Person person)
