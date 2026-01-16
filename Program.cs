@@ -15,86 +15,93 @@ namespace BlackestJack
             Person player = new Person();
             Person dealer = new Person();
 
-            // correct order of initial dealing
+            // Deal initial cards
             Card playerCard1 = game.dealCard(deck, player);
             Card dealerCard1 = game.dealCard(deck, dealer);
             Card playerCard2 = game.dealCard(deck, player);
             Card dealerCard2 = game.dealCard(deck, dealer);
 
-            Console.WriteLine($"Dealt card: {playerCard1.Rank} of {playerCard1.Suit}");
-            Console.WriteLine($"Dealt card: {playerCard2.Rank} of {playerCard2.Suit}");
+            Console.WriteLine($"Your cards: {playerCard1.Rank} of {playerCard1.Suit}, {playerCard2.Rank} of {playerCard2.Suit}");
+            Console.WriteLine($"Your hand value: {player.calcHandValue()}");
+            Console.WriteLine($"Dealer shows: {dealerCard1.Rank} of {dealerCard1.Suit}");
 
-            Console.WriteLine($"Player's hand value: {player.calcHandValue()}");
-
-            Console.WriteLine($"Dealer's card: {dealerCard1.Rank} of {dealerCard1.Suit}");
-
-            // check for blackjack
-            if (player.calcHandValue() == 21 && dealer.calcHandValue() < 21)
+            // Check for immediate blackjack
+            if (player.calcHandValue() == 21 || dealer.calcHandValue() == 21)
             {
-                Console.WriteLine("Congrats, you got BlackJack!");
-            }
-            // then check if dealer has blackjack for push
-            else if (player.calcHandValue() == 21 && dealer.calcHandValue() == 21)
-            {
-                Console.WriteLine("Push, dealer has BlackJack too :(");
-            }
-            // if no blackjack, continue game
-            else
-            {
-                string playerChoice = "";
+                Console.WriteLine($"Dealer's other card: {dealerCard2.Rank} of {dealerCard2.Suit}");
+                Console.WriteLine($"Dealer's hand value: {dealer.calcHandValue()}");
 
-                while (player.calcHandValue() < 21 && !playerChoice.Equals("stand"))
+                if (player.calcHandValue() == 21 && dealer.calcHandValue() == 21)
                 {
-                    Console.WriteLine("Would you like to 'hit' or 'stand'?");
-                    playerChoice = Console.ReadLine().ToLower();
+                    Console.WriteLine("Push! Both have BlackJack.");
+                }
+                else if (player.calcHandValue() == 21)
+                {
+                    Console.WriteLine("BlackJack! You win!");
+                }
+                else
+                {
+                    Console.WriteLine("Dealer has BlackJack! You lose.");
+                }
+                Console.ReadKey();
+                return;
+            }
 
-                    if (playerChoice.Equals("hit"))
+            // Player's turn
+            string playerChoice = "";
+            while (player.calcHandValue() < 21 && !playerChoice.Equals("stand"))
+            {
+                Console.WriteLine("Would you like to 'hit' or 'stand'?");
+                playerChoice = Console.ReadLine().ToLower();
+
+                if (playerChoice.Equals("hit"))
+                {
+                    Card dealtCard = game.dealCard(deck, player);
+                    Console.WriteLine($"You get: {dealtCard.Rank} of {dealtCard.Suit}");
+                    Console.WriteLine($"Your hand value: {player.calcHandValue()}");
+
+                    if (player.calcHandValue() > 21)
                     {
-                        // check if player has ace and adjust its value if necessary
-                        player.aceHit();
-                        Card dealtCard = game.dealCard(deck, player);
-                        Console.WriteLine($"Dealt card: {dealtCard.Rank} of {dealtCard.Suit}");
-                        Console.WriteLine($"Player's hand value: {player.calcHandValue()}"); // will count the ace as 11 if the player hits with ace due to dealCard method - NEEDS FIXING!
-                        if (player.calcHandValue() > 21)
-                        {
-                            Console.WriteLine("Bussssssssssst, you lose.");
-                        }
-                    }
-                    else
-                    {
-                        int dealerHandValue = dealer.calcHandValue();
-                        Console.WriteLine($"Dealer shows a {dealerCard2.Rank} of {dealerCard2.Suit}");
-
-                        if (dealerHandValue < 17)
-                        {
-                            while (dealerHandValue < 17)
-                            {
-                                Card dealersCards = game.dealCard(deck, dealer);
-                                dealerHandValue = dealer.calcHandValue();
-                                Console.WriteLine($"Dealer gets {dealersCards.Rank} of {dealersCards.Suit}, totaling to {dealerHandValue}");
-                            }
-                        }
-
-                        if (player.calcHandValue() > dealerHandValue)
-                        {
-                            Console.WriteLine("You win!");
-                        }
-                        else
-                        if (player.calcHandValue() == dealerHandValue)
-                        {
-                            Console.WriteLine("Push.");
-                        }
-                        else
-                        {
-                            Console.WriteLine("Dealer wins");
-                        }
+                        Console.WriteLine("Bust! You lose.");
+                        Console.ReadKey();
+                        return;
                     }
                 }
             }
 
+            // Dealer's turn (only if player didn't bust)
+            Console.WriteLine($"Dealer's other card: {dealerCard2.Rank} of {dealerCard2.Suit}");
+            Console.WriteLine($"Dealer's total: {dealer.calcHandValue()}");
+
+            while (dealer.calcHandValue() < 17)
+            {
+                Card dealtCard = game.dealCard(deck, dealer);
+                Console.WriteLine($"Dealer gets: {dealtCard.Rank} of {dealtCard.Suit}");
+                Console.WriteLine($"Dealer's total: {dealer.calcHandValue()}");
+            }
+
+            // Determine winner
+            int playerScore = player.calcHandValue();
+            int dealerScore = dealer.calcHandValue();
+
+            if (dealerScore > 21)
+            {
+                Console.WriteLine("Dealer busts! You win!");
+            }
+            else if (playerScore > dealerScore)
+            {
+                Console.WriteLine("You win!");
+            }
+            else if (playerScore == dealerScore)
+            {
+                Console.WriteLine("Push!");
+            }
+            else
+            {
+                Console.WriteLine("Dealer wins!");
+            }
+
+            Console.ReadKey();
         }
     }
 }
-
-
-// add logic to support blackjack

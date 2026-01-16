@@ -20,26 +20,33 @@ namespace BlackestJack
         public int calcHandValue()
         {
             int value = 0;
+            int aceCount = 0; // count of aces in hand
+
+            // First pass: calculate basic values
             foreach (var card in hand)
             {
-                int numericValue;
-
-                if (int.TryParse(card.Rank, out numericValue))
+                if (int.TryParse(card.Rank, out int numericValue))
                 {
                     value += numericValue;
                 }
-                else
+                else if (card.Rank == "Jack" || card.Rank == "Queen" || card.Rank == "King")
                 {
-                    if (card.Rank == "Jack" || card.Rank == "Queen" || card.Rank == "King")
-                    {
-                        value += 10;
-                    }
-                    else if (card.Rank == "Ace")
-                    {
-                        value += 11;
-                    }
+                    value += 10;
+                }
+                else if (card.Rank == "Ace")
+                {
+                    value += 11;
+                    aceCount++;
                 }
             }
+
+            // Adjust for aces if value > 21
+            while (value > 21 && aceCount > 0)
+            {
+                value -= 10; // Convert an Ace from 11 to 1
+                aceCount--;
+            }
+
             return value;
         }
 
