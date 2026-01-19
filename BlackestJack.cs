@@ -16,11 +16,14 @@ namespace BlackestJack
         public List<Card> CreateDeck()
         {
             List<Card> deck = new List<Card>();
-            foreach (string suit in suitList)
+            for (int i = 0; i < 8; i++)
             {
-                foreach (string rank in rankList)
+                foreach (string suit in suitList)
                 {
-                    deck.Add(new Card(suit, rank));
+                    foreach (string rank in rankList)
+                    {
+                        deck.Add(new Card(suit, rank));
+                    }
                 }
             }
 
