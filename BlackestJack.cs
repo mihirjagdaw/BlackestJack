@@ -9,7 +9,9 @@ namespace BlackestJack
     internal class BlackestJack
     {
         private List<String> suitList = new List<String>() { "Hearts", "Diamonds", "Clubs", "Spades" };
-        private List<String> rankList = new List<String>() { "2", "3", "4", "5", "6", "7", "8", "9", "10", "Jack", "Queen", "King", "Ace" };
+
+        private List<String> rankList = new List<String>()
+            { "2", "3", "4", "5", "6", "7", "8", "9", "10", "Jack", "Queen", "King", "Ace" };
 
         public List<Card> CreateDeck()
         {
@@ -21,9 +23,11 @@ namespace BlackestJack
                     deck.Add(new Card(suit, rank));
                 }
             }
+
             Shuffle(deck);
             return deck;
         }
+
         private void Shuffle(List<Card> deck)
         {
             Random rand = new Random();
@@ -36,7 +40,7 @@ namespace BlackestJack
             }
         }
 
-        public Card dealCard (List<Card> deck, Person person)
+        public Card dealCard(List<Card> deck, Person person)
         {
             Random rand = new Random();
             int index = rand.Next(deck.Count);
@@ -46,5 +50,16 @@ namespace BlackestJack
             return dealtCard;
         }
 
+        // Method to create type writer effect for displaying text
+        public void TypeWriterEffect(string message, int delay = 50)
+        {
+            foreach (char c in message)
+            {
+                Console.Write(c);
+                System.Threading.Thread.Sleep(delay);
+            }
+
+            Console.WriteLine();
+        }
     }
 }
