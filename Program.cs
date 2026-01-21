@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Media;
+using System.Security.Policy;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -11,13 +12,20 @@ namespace BlackestJack
     {
         static void Main(string[] args)
         {
+            int bankroll = 1000;
+            int betAmount = 0;
             bool playAgain = true;
+            BlackestJack game = new BlackestJack();
+
             while (playAgain)
             {
-                BlackestJack game = new BlackestJack();
-                List<Card> deck = game.CreateDeck();
+                List<Card> deck = game.CreateDeck(); // deck is created and shuffled at the start of each round (like in most casinos)
                 Person player = new Person();
                 Person dealer = new Person();
+
+                game.TypeWriterEffect($"Your bankroll is {bankroll}, how much would you like to bet?");
+                betAmount = Convert.ToInt32(Console.ReadLine());
+                bankroll -= betAmount;
 
                 // Deal initial cards
                 Card playerCard1 = game.dealCard(deck, player);
@@ -38,10 +46,12 @@ namespace BlackestJack
                     if (player.calcHandValue() == 21 && dealer.calcHandValue() == 21)
                     {
                         game.TypeWriterEffect("Push! Both have BlackJack.");
+                        bankroll += betAmount; // return bet to player
                     }
                     else if (player.calcHandValue() == 21)
                     {
                         game.TypeWriterEffect("BlackJack! You win!");
+                        bankroll += (betAmount/3)*2;
                     }
                     else
                     {
@@ -92,19 +102,24 @@ namespace BlackestJack
                 if (dealerScore > 21)
                 {
                     game.TypeWriterEffect("Dealer busts! You win!");
+                    bankroll += betAmount * 2;
                 }
                 else if (playerScore > dealerScore)
                 {
                     game.TypeWriterEffect("You win!");
+                    bankroll += betAmount * 2;
                 }
                 else if (playerScore == dealerScore)
                 {
                     game.TypeWriterEffect("Push!");
+                    bankroll += betAmount; // return bet to player
                 }
                 else
                 {
                     game.TypeWriterEffect("Dealer wins!");
                 }
+
+                Console.WriteLine();
 
                 // Ask to play again
                 game.TypeWriterEffect("Would you like to play again? (y/n)");
