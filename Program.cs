@@ -5,6 +5,7 @@ using System.Media;
 using System.Security.Policy;
 using System.Text;
 using System.Threading.Tasks;
+using Spectre.Console;
 
 namespace BlackestJack
 {
@@ -23,7 +24,12 @@ namespace BlackestJack
                 Person player = new Person();
                 Person dealer = new Person();
 
-                game.TypeWriterEffect($"Your bankroll is {bankroll}, how much would you like to bet?");
+                game.TypeWriterEffect($"Your bankroll is [green]${bankroll}[/], how much would you like to bet? ");
+
+                //game.TypeWriterEffect($"Your bankroll is ");
+                //AnsiConsole.Markup($"[green]${bankroll}[/]"); // display bankroll in green
+                //game.TypeWriterEffect(", how much would you like to bet? ");
+
                 betAmount = Convert.ToInt32(Console.ReadLine());
                 bankroll -= betAmount;
 

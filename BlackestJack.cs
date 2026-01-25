@@ -1,7 +1,9 @@
-﻿using System;
+﻿using Spectre.Console;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace BlackestJack
@@ -54,15 +56,85 @@ namespace BlackestJack
         }
 
         // Method to create type writer effect for displaying text
+        //public void TypeWriterEffect(string message, int delay = 50)
+        //{
+            //foreach (char c in message)
+            //{
+                //Console.Write(c);
+                //Thread.Sleep(delay);
+            //}
+
+            //Console.WriteLine();
+        //}
+
+
         public void TypeWriterEffect(string message, int delay = 50)
         {
-            foreach (char c in message)
+            // Parse markup and typewrite with colors
+            var segments = ParseMarkupSegments(message);
+
+            foreach (var segment in segments)
             {
-                Console.Write(c);
-                System.Threading.Thread.Sleep(delay);
+                foreach (char c in segment.Text)
+                {
+                    // Use Markup to render with proper styling
+                    var markup = segment.Color == "default"
+                        ? Markup.Escape(c.ToString())
+                        : $"[{segment.Color}]{Markup.Escape(c.ToString())}[/]";
+
+                    AnsiConsole.Markup(markup);
+                    Thread.Sleep(delay);
+                }
             }
 
             Console.WriteLine();
+        }
+
+        private List<MarkupSegment> ParseMarkupSegments(string input)
+        {
+            var segments = new List<MarkupSegment>();
+            var regex = new System.Text.RegularExpressions.Regex(@"\[(\w+)\](.*?)\[/\]");
+
+            int lastIndex = 0;
+            foreach (System.Text.RegularExpressions.Match match in regex.Matches(input))
+            {
+                // Add plain text before the markup
+                if (match.Index > lastIndex)
+                {
+                    segments.Add(new MarkupSegment
+                    {
+                        Text = input.Substring(lastIndex, match.Index - lastIndex),
+                        Color = "default"
+                    });
+                }
+
+                // Add the colored segment
+                segments.Add(new MarkupSegment
+                {
+                    Text = match.Groups[2].Value,
+                    Color = match.Groups[1].Value
+                });
+
+                lastIndex = match.Index + match.Length;
+            }
+
+            // Add remaining text
+            if (lastIndex < input.Length)
+            {
+                segments.Add(new MarkupSegment
+                {
+                    Text = input.Substring(lastIndex),
+                    Color = "default"
+                });
+            }
+
+            return segments;
+        }
+
+        private class MarkupSegment
+        {
+            public string Text { get; set; }
+            public string Color { get; set; }
         }
     }
 }
