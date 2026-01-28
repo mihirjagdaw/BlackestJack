@@ -20,7 +20,9 @@ namespace BlackestJack
 
             while (playAgain)
             {
-                List<Card> deck = game.CreateDeck(); // deck is created and shuffled at the start of each round (like in most casinos)
+                List<Card>
+                    deck = game
+                        .CreateDeck(); // deck is created and shuffled at the start of each round (like in most casinos)
                 Person player = new Person();
                 Person dealer = new Person();
 
@@ -30,7 +32,13 @@ namespace BlackestJack
                 //AnsiConsole.Markup($"[green]${bankroll}[/]"); // display bankroll in green
                 //game.TypeWriterEffect(", how much would you like to bet? ");
 
-                betAmount = Convert.ToInt32(Console.ReadLine());
+                betAmount = Convert.ToInt32(AnsiConsole.Ask<string>("> [green]$[/]"));
+                while (betAmount > bankroll || betAmount <= 0)
+                {
+                    game.TypeWriterEffect("Invalid bet amount. Please enter a valid amount: ");
+                    betAmount = Convert.ToInt32(AnsiConsole.Ask<string>("> [green]$[/]"));
+                }
+
                 bankroll -= betAmount;
 
                 // Deal initial cards
@@ -39,7 +47,8 @@ namespace BlackestJack
                 Card playerCard2 = game.dealCard(deck, player);
                 Card dealerCard2 = game.dealCard(deck, dealer);
 
-                game.TypeWriterEffect($"Your cards: {playerCard1.Rank} of {playerCard1.Suit}, {playerCard2.Rank} of {playerCard2.Suit}");
+                game.TypeWriterEffect(
+                    $"Your cards: {playerCard1.Rank} of {playerCard1.Suit}, {playerCard2.Rank} of {playerCard2.Suit}");
                 game.TypeWriterEffect($"Your hand value: {player.calcHandValue()}");
                 game.TypeWriterEffect($"Dealer shows: {dealerCard1.Rank} of {dealerCard1.Suit}");
 
@@ -57,7 +66,7 @@ namespace BlackestJack
                     else if (player.calcHandValue() == 21)
                     {
                         game.TypeWriterEffect("BlackJack! You win!");
-                        bankroll += (betAmount/3)*2;
+                        bankroll += (betAmount / 3) * 2;
                     }
                     else
                     {
@@ -70,15 +79,18 @@ namespace BlackestJack
 
                 // Player's turn
                 string playerChoice = "";
-                while (player.calcHandValue() < 21 && !playerChoice.Equals("stand"))
+                while (player.calcHandValue() < 21 && !playerChoice.Equals("Stand"))
                 {
-                    game.TypeWriterEffect("Would you like to 'hit' or 'stand'?");
-                    playerChoice = Console.ReadLine().ToLower();
+                    game.TypeWriterEffect("Would you like to 'Hit' or 'Stand'?");
+                    playerChoice = AnsiConsole.Prompt(
+                        new SelectionPrompt<string>()
+                            .AddChoices("Hit", "Stand")
+                    );
 
-                    if (playerChoice.Equals("hit"))
+                    if (playerChoice.Equals("Hit"))
                     {
                         Card dealtCard = game.dealCard(deck, player);
-                            game.TypeWriterEffect($"You get: {dealtCard.Rank} of {dealtCard.Suit}");
+                        game.TypeWriterEffect($"You get: {dealtCard.Rank} of {dealtCard.Suit}");
                         game.TypeWriterEffect($"Your hand value: {player.calcHandValue()}");
 
                         if (player.calcHandValue() > 21)
@@ -129,9 +141,30 @@ namespace BlackestJack
 
                 // Ask to play again
                 game.TypeWriterEffect("Would you like to play again? (y/n)");
-                playAgain = Console.ReadLine().ToLower() == "y"; // if statement to set playAgain based on user input
-            }
+                var choice = AnsiConsole.Prompt(
+                    new SelectionPrompt<string>()
+                        .AddChoices("Yes", "No"));
 
+                if (choice == "Yes")
+                {
+                    playAgain = true;
+                }
+                else
+                {
+                    playAgain = false;
+                }
+
+            }
         }
     }
 }
+
+// To Do:
+// If dealer has blackjack, show player's second card to show if player lost or push at best
+// Fix logic, sometimes doesn't allow player to play again.
+// Add sound effects (card dealing, win, lose, blackjack)
+// if player has no more money, end game elegantly
+// make ui more readable with colors, ascii art, more spaces, etc.
+
+
+
